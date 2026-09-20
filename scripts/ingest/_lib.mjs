@@ -1,7 +1,7 @@
 // Shared helpers for ingest scripts. No external deps.
 // Uses the `gh` CLI (must be authenticated) for GitHub API access.
 
-import { execSync, spawnSync } from "node:child_process";
+import { spawnSync } from "node:child_process";
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { dirname } from "node:path";
 

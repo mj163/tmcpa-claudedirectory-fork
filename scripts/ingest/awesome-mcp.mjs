@@ -46,7 +46,7 @@ function parseAwesomeReadme(markdown, sourceRepo, defaultCategory) {
 
     const m = line.trim().match(ITEM_RE);
     if (!m) continue;
-    const [, _displayName, owner, repo, _icons, description] = m;
+    const [, , owner, repo, , description] = m;
     const cleanDesc = stripBadges(description).trim();
     if (!cleanDesc || cleanDesc.length < 10) continue;
     const repoFull = `${owner}/${repo}`;

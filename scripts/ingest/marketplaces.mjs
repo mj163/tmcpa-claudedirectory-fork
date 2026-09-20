@@ -4,7 +4,7 @@
 // Each entry in the marketplace.json `plugins` array becomes a plugin listing
 // on the site. We extract plugin name, description, author, category, source repo.
 
-import { ghContent, ghRepo, gh, slugify, dedupeBySlug, writeJson, log, truncate, deriveTags } from "./_lib.mjs";
+import { ghContent, ghRepo, slugify, dedupeBySlug, writeJson, log, truncate, deriveTags } from "./_lib.mjs";
 
 const KNOWN_MARKETPLACES = [
   "anthropics/claude-plugins-official",

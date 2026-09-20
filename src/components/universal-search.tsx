@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -34,26 +34,14 @@ const typeConfig = {
   blog: { icon: Newspaper, label: "Blog", href: "/blog", color: "text-amber-500" },
 };
 
-export function UniversalSearch() {
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState<SearchResult[]>([]);
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+function searchCatalog(query: string): SearchResult[] {
+  if (query.length < 2) return [];
 
-  useEffect(() => {
-    if (query.length < 2) {
-      setResults([]);
-      setIsOpen(false);
-      return;
-    }
+  const searchQuery = query.toLowerCase();
+  const allResults: SearchResult[] = [];
 
-    const searchQuery = query.toLowerCase();
-    const allResults: SearchResult[] = [];
-
-    // Search prompts
-    prompts.forEach((p) => {
+  // Search prompts
+  prompts.forEach((p) => {
       if (
         p.title.toLowerCase().includes(searchQuery) ||
         p.description.toLowerCase().includes(searchQuery) ||
@@ -188,10 +176,16 @@ export function UniversalSearch() {
       }
     });
 
-    setResults(allResults.slice(0, 10));
-    setIsOpen(allResults.length > 0);
-    setSelectedIndex(0);
-  }, [query]);
+  return allResults.slice(0, 10);
+}
+
+export function UniversalSearch() {
+  const [query, setQuery] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const results = useMemo(() => searchCatalog(query), [query]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -245,7 +239,12 @@ export function UniversalSearch() {
           type="search"
           placeholder="Search prompts, MCP servers, hooks, skills, plugins, guides, agents, blog..."
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={(e) => {
+            const value = e.target.value;
+            setQuery(value);
+            setSelectedIndex(0);
+            setIsOpen(value.length >= 2);
+          }}
           onFocus={() => query.length >= 2 && results.length > 0 && setIsOpen(true)}
           onKeyDown={handleKeyDown}
           className="h-14 pl-12 pr-4 text-lg rounded-xl border-2 bg-background/80 backdrop-blur-sm"
